@@ -17,7 +17,7 @@ public class MyMoneyITTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
 
-        String testData = "/Users/jayeshsinha/Documents/mymoney/src/test/java/integrationtest/testdata1.txt";
+        String testData = "src/test/java/integrationtest/testdata1.txt";
 
         String expected = "10593 7897 2272\n" +
                 "23619 11809 3936\n";
@@ -36,7 +36,7 @@ public class MyMoneyITTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
 
-        String testData = "/Users/jayeshsinha/Documents/mymoney/src/test/java/integrationtest/testdata2.txt";
+        String testData = "src/test/java/integrationtest/testdata2.txt";
 
         String expected = "15937 14552 6187\n" +
                 "23292 16055 7690\n" +
