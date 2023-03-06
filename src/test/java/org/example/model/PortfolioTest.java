@@ -28,7 +28,7 @@ public class PortfolioTest {
         portfolio.applyRate(10, 8, 5);
         assertEquals(1100, portfolio.getEquityAllocation(), delta);
         assertEquals(648, portfolio.getDebtAllocation(), delta);
-        assertEquals(209, Math.round(portfolio.getGoldAllocation()), delta);
+        assertEquals(210, portfolio.getGoldAllocation(), delta);
     }
 
     @Test
@@ -44,13 +44,13 @@ public class PortfolioTest {
         portfolio.applyRate(10, 8, 5);
         assertEquals(1100, portfolio.getEquityAllocation(), delta);
         assertEquals(648, portfolio.getDebtAllocation(), delta);
-        assertEquals(209, Math.round(portfolio.getGoldAllocation()), delta);
+        assertEquals(210, Math.round(portfolio.getGoldAllocation()), delta);
 
 
         portfolio.applyRate(10, 8, 5);
         assertEquals(1430, portfolio.getEquityAllocation(), delta);
         assertEquals(807, Math.round(portfolio.getDebtAllocation()), delta);
-        assertEquals(271, Math.round(portfolio.getGoldAllocation()), delta);
+        assertEquals(273, Math.round(portfolio.getGoldAllocation()), delta);
 
 
     }

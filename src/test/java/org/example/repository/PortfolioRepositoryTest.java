@@ -5,7 +5,6 @@ import org.example.model.Portfolio;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class PortfolioRepositoryTest {
 
@@ -17,7 +16,7 @@ public class PortfolioRepositoryTest {
         PortfolioRepository portfolioRepository = new PortfolioRepository();
         portfolioRepository.setPortfolioForMonth(Month.JANUARY, portfolio);
 
-        assertTrue(portfolio.equals(portfolioRepository.getPortfolioForMonth(Month.JANUARY)));
+        assertEquals(portfolio, portfolioRepository.getPortfolioForMonth(Month.JANUARY));
     }
 
     @Test
@@ -38,11 +37,11 @@ public class PortfolioRepositoryTest {
         portfolioRepository.setPortfolioForMonth(Month.APRIL, portfolioMar);
 
 
-        assertTrue(portfolioJan.equals(portfolioRepository.getPortfolioForMonth(Month.JANUARY)));
-        assertTrue(portfolioFeb.equals(portfolioRepository.getPortfolioForMonth(Month.FEBRUARY)));
-        assertTrue(expectedPortfolioMar.equals(portfolioRepository.getPortfolioForMonth(Month.MARCH)));
+        assertEquals(portfolioJan, portfolioRepository.getPortfolioForMonth(Month.JANUARY));
+        assertEquals(portfolioFeb, portfolioRepository.getPortfolioForMonth(Month.FEBRUARY));
+        assertEquals(expectedPortfolioMar, portfolioRepository.getPortfolioForMonth(Month.MARCH));
 
-        assertTrue(portfolioMar.equals(portfolioRepository.getPortfolioForMonth(Month.APRIL)));
+        assertEquals(portfolioMar, portfolioRepository.getPortfolioForMonth(Month.APRIL));
     }
 
     @Test
@@ -52,7 +51,7 @@ public class PortfolioRepositoryTest {
         PortfolioRepository portfolioRepository = new PortfolioRepository();
         portfolioRepository.setPortfolioForMonth(Month.JANUARY, portfolio);
 
-        assertTrue(portfolio.equals(portfolioRepository.getPortfolioForMonth(Month.JANUARY)));
+        assertEquals(portfolio, portfolioRepository.getPortfolioForMonth(Month.JANUARY));
 
     }
 }

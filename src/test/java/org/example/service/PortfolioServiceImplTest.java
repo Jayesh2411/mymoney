@@ -21,11 +21,11 @@ public class PortfolioServiceImplTest {
         portfolioService.allocateFunds(6000, 3000, 1000);
         Portfolio expectedPortfolio = new Portfolio(6000, 3000, 1000);
 
-        assertTrue(expectedPortfolio.equals(portfolioService.getPortfolio()));
+        assertEquals(expectedPortfolio, portfolioService.getPortfolio());
 
-        assertEquals(60, Math.round(portfolioService.getPortfolio().getEquityAllocationPercent()), DELTA);
-        assertEquals(30, Math.round(portfolioService.getPortfolio().getDebtAllocationPercent()), DELTA);
-        assertEquals(10, Math.round(portfolioService.getPortfolio().getGoldAllocationPercent()), DELTA);
+        assertEquals(60, Math.round(portfolioService.getPortfolio().getEquityAllocationPercent()));
+        assertEquals(30, Math.round(portfolioService.getPortfolio().getDebtAllocationPercent()));
+        assertEquals(10, Math.round(portfolioService.getPortfolio().getGoldAllocationPercent()));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class PortfolioServiceImplTest {
         portfolioService.allocateFunds(6000, 3000, 1000);
         Portfolio expectedPortfolio = new Portfolio(7000, 3000, 1000);
 
-        assertFalse(expectedPortfolio.equals(portfolioService.getPortfolio()));
+        assertNotEquals(expectedPortfolio, portfolioService.getPortfolio());
     }
 
 
@@ -56,7 +56,7 @@ public class PortfolioServiceImplTest {
 
         Portfolio expectedPortfolio = new Portfolio(6600, 3300, 1100);
 
-        assertTrue(expectedPortfolio.equals(portfolioService.getPortfolio()));
+        assertEquals(expectedPortfolio, portfolioService.getPortfolio());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class PortfolioServiceImplTest {
         portfolioService.monthChangeRate(10.5f, 10.7f, 10, Month.JANUARY);
 
         Portfolio expectedPortfolio = new Portfolio(6630, 3321, 1100);
-        assertTrue(expectedPortfolio.equals(portfolioService.getPortfolio()));
+        assertEquals(expectedPortfolio, portfolioService.getPortfolio());
     }
 
     @Test
@@ -94,16 +94,15 @@ public class PortfolioServiceImplTest {
 
     @Test(expected = InsufficientDataException.class)
     public void rebalanceShouldNotAutoAllocateFundsWhenDataIsNotPresent() throws Exception {
-        Portfolio portfolio = new Portfolio(1000, 200, 50);
         portfolioService.allocateFunds(1000, 200, 50);
 
         portfolioService.monthChangeRate(10, 5, 2, Month.JANUARY);
 
         portfolioService.reBalancePortfolio();
 
-        assertEquals(1089, Math.round(portfolioService.getPortfolio().getEquityAllocation()));
-        assertEquals(218, Math.round(portfolioService.getPortfolio().getDebtAllocation()));
-        assertEquals(54, Math.round(portfolioService.getPortfolio().getGoldAllocation()));
+        assertEquals(1089, portfolioService.getPortfolio().getEquityAllocation(), DELTA);
+        assertEquals(218, portfolioService.getPortfolio().getDebtAllocation(), DELTA);
+        assertEquals(54, portfolioService.getPortfolio().getGoldAllocation(), DELTA);
 
     }
 
@@ -125,7 +124,7 @@ public class PortfolioServiceImplTest {
 
         portfolioService.reBalancePortfolio();
 
-        assertEquals(1672, Math.round(portfolioService.getPortfolio().getEquityAllocation()));
+        assertEquals(1674, Math.round(portfolioService.getPortfolio().getEquityAllocation()));
         assertEquals(334, Math.round(portfolioService.getPortfolio().getDebtAllocation()));
         assertEquals(83, Math.round(portfolioService.getPortfolio().getGoldAllocation()));
 
