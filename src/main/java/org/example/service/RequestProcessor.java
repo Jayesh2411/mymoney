@@ -4,6 +4,7 @@ import org.example.exception.InsufficientDataException;
 import org.example.model.Month;
 import org.example.model.Portfolio;
 import org.example.repository.PortfolioRepository;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,34 +18,39 @@ public class RequestProcessor {
     private static final String CHANGE = "CHANGE";
     private static final String BALANCE = "BALANCE";
     private static final String REBALANCE = "REBALANCE";
+    public static final String INPUT_SEPERATOR = " ";
 
     public static void processRequest(String filePath) {
 
-        Scanner testDataValues = readTestData(filePath);
+        Scanner scannedTestData = readTestData(filePath);
 
         Portfolio portfolio = new Portfolio();
         PortfolioRepository portfolioRepository = new PortfolioRepository();
         PortfolioServiceImpl portfolioService = new PortfolioServiceImpl(portfolio, portfolioRepository);
 
 
-        while (testDataValues.hasNext()) {
-            String[] inputValues = testDataValues.nextLine().split(" ");
+        while (scannedTestData.hasNext()) {
+            String[] testDataLine = scannedTestData.nextLine().split(INPUT_SEPERATOR);
 
-            switch (inputValues[0]) {
+            switch (testDataLine[0]) {
                 case ALLOCATE:
-                    portfolioService.allocateFunds(Integer.parseInt(inputValues[1]), Integer.parseInt(inputValues[2]), Integer.parseInt(inputValues[3]));
+                    checkIfDataValid(testDataLine, 4);
+                    portfolioService.allocateFunds(Integer.parseInt(testDataLine[1]), Integer.parseInt(testDataLine[2]), Integer.parseInt(testDataLine[3]));
                     break;
 
                 case SIP:
-                    portfolioService.initiateSIP(Float.parseFloat(inputValues[1]), Float.parseFloat(inputValues[2]), Float.parseFloat(inputValues[3]));
+                    checkIfDataValid(testDataLine, 4);
+                    portfolioService.initiateSIP(Float.parseFloat(testDataLine[1]), Float.parseFloat(testDataLine[2]), Float.parseFloat(testDataLine[3]));
                     break;
 
                 case CHANGE:
-                    portfolioService.monthChangeRate(Float.parseFloat(inputValues[1].replace("%", "")), Float.parseFloat(inputValues[2].replace("%", "")), Float.parseFloat(inputValues[3].replace("%", "")), Month.valueOf(inputValues[4]));
+                    checkIfDataValid(testDataLine, 5);
+                    portfolioService.monthChangeRate(Float.parseFloat(testDataLine[1].replace("%", "")), Float.parseFloat(testDataLine[2].replace("%", "")), Float.parseFloat(testDataLine[3].replace("%", "")), Month.valueOf(testDataLine[4]));
                     break;
 
                 case BALANCE:
-                    System.out.println(portfolioService.balanceForMonth(Month.valueOf(inputValues[1])).toString());
+                    checkIfDataValid(testDataLine, 2);
+                    System.out.println(portfolioService.balanceForMonth(Month.valueOf(testDataLine[1])).toString());
                     break;
 
                 case REBALANCE:
@@ -58,6 +64,13 @@ public class RequestProcessor {
 
             }
 
+        }
+    }
+
+    private static void checkIfDataValid(String[] inputValues, int len) {
+        if (inputValues.length < len) {
+            System.out.println("INVALID DATA PROVIDED");
+            Assert.fail();
         }
     }
 
