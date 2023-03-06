@@ -24,24 +24,34 @@ public class PortfolioRepositoryTest {
         Portfolio portfolioJan = new Portfolio(300, 200, 50);
         Portfolio portfolioFeb = new Portfolio(200, 100, 40);
         Portfolio portfolioMar = new Portfolio(100, 80, 20);
-        Portfolio expectedPortfolioMar = new Portfolio(100, 80, 20);
 
         PortfolioRepository portfolioRepository = new PortfolioRepository();
         portfolioRepository.setPortfolioForMonth(Month.JANUARY, portfolioJan);
         portfolioRepository.setPortfolioForMonth(Month.FEBRUARY, portfolioFeb);
         portfolioRepository.setPortfolioForMonth(Month.MARCH, portfolioMar);
 
+        assertEquals(portfolioJan, portfolioRepository.getPortfolioForMonth(Month.JANUARY));
+        assertEquals(portfolioFeb, portfolioRepository.getPortfolioForMonth(Month.FEBRUARY));
+        assertEquals(portfolioMar, portfolioRepository.getPortfolioForMonth(Month.MARCH));
+    }
 
-        portfolioMar.setEquityAllocation(200);
+    @Test
+    public void setPortfolioForMonthShouldNotModifyObjectsInRepo() {
+        Portfolio portfolioJan = new Portfolio(300, 200, 50);
+        Portfolio portfolioFeb = new Portfolio(200, 100, 40);
+        Portfolio portfolioMar = new Portfolio(100, 80, 20);
+        Portfolio portfolioMarSnapshot = portfolioMar.portfolioSnapshot();
 
-        portfolioRepository.setPortfolioForMonth(Month.APRIL, portfolioMar);
+        PortfolioRepository portfolioRepository = new PortfolioRepository();
+        portfolioRepository.setPortfolioForMonth(Month.JANUARY, portfolioJan);
+        portfolioRepository.setPortfolioForMonth(Month.FEBRUARY, portfolioFeb);
+        portfolioRepository.setPortfolioForMonth(Month.MARCH, portfolioMar);
 
+        portfolioMar.getGoldFund().setCurrentAllocation(30);
 
         assertEquals(portfolioJan, portfolioRepository.getPortfolioForMonth(Month.JANUARY));
         assertEquals(portfolioFeb, portfolioRepository.getPortfolioForMonth(Month.FEBRUARY));
-        assertEquals(expectedPortfolioMar, portfolioRepository.getPortfolioForMonth(Month.MARCH));
-
-        assertEquals(portfolioMar, portfolioRepository.getPortfolioForMonth(Month.APRIL));
+        assertEquals(portfolioMarSnapshot, portfolioRepository.getPortfolioForMonth(Month.MARCH));
     }
 
     @Test

@@ -9,26 +9,23 @@ public class PortfolioServiceImpl implements PortfolioService {
 
 
     PortfolioRepository repository;
-    private final Portfolio portfolio;
+    private Portfolio portfolio;
 
-    public PortfolioServiceImpl(Portfolio portfolio, PortfolioRepository repository) {
-        this.portfolio = portfolio;
+    public PortfolioServiceImpl(PortfolioRepository repository) {
         this.repository = repository;
     }
 
     @Override
     public void allocateFunds(int equity, int debt, int gold) {
-        this.portfolio.setEquityAllocation(equity);
-        this.portfolio.setDebtAllocation(debt);
-        this.portfolio.setGoldAllocation(gold);
+        this.portfolio = new Portfolio(equity, debt, gold);
         this.portfolio.setInitialAllocationPercentage();
     }
 
     @Override
     public void initiateSIP(float equity, float debt, float gold) {
-        this.portfolio.setSipValueForEquity(equity);
-        this.portfolio.setSipValueForDebt(debt);
-        this.portfolio.setSipValueForGold(gold);
+        this.portfolio.getEquityFund().setSipValue(equity);
+        this.portfolio.getDebtFund().setSipValue(debt);
+        this.portfolio.getGoldFund().setSipValue(gold);
     }
 
     @Override

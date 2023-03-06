@@ -2,7 +2,6 @@ package org.example.service;
 
 import org.example.exception.InsufficientDataException;
 import org.example.model.Month;
-import org.example.model.Portfolio;
 import org.example.repository.PortfolioRepository;
 import org.junit.Assert;
 
@@ -13,20 +12,19 @@ import java.util.Scanner;
 
 public class RequestProcessor {
 
+    public static final String INPUT_SEPERATOR = " ";
     private static final String ALLOCATE = "ALLOCATE";
     private static final String SIP = "SIP";
     private static final String CHANGE = "CHANGE";
     private static final String BALANCE = "BALANCE";
     private static final String REBALANCE = "REBALANCE";
-    public static final String INPUT_SEPERATOR = " ";
 
     public static void processRequest(String filePath) {
 
         Scanner scannedTestData = readTestData(filePath);
 
-        Portfolio portfolio = new Portfolio();
         PortfolioRepository portfolioRepository = new PortfolioRepository();
-        PortfolioServiceImpl portfolioService = new PortfolioServiceImpl(portfolio, portfolioRepository);
+        PortfolioServiceImpl portfolioService = new PortfolioServiceImpl(portfolioRepository);
 
 
         while (scannedTestData.hasNext()) {

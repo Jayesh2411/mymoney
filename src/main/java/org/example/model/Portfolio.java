@@ -1,33 +1,18 @@
 package org.example.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Portfolio implements Cloneable {
     private boolean isFirstMonth = true;
-    private int equityAllocation;
-    private int debtAllocation;
-    private int goldAllocation;
-
-    private float sipValueForEquity;
-    private float sipValueForDebt;
-    private float sipValueForGold;
-
-    private float equityAllocationPercent;
-    private float debtAllocationPercent;
-    private float goldAllocationPercent;
-
-    private float equityAllocationChangeRate;
-    private float debtAllocationChangeRate;
-    private float goldAllocationChangeRate;
-
+    private Map<FundType, Fund> funds;
 
     public Portfolio(int equityAllocation, int debtAllocation, int goldAllocation) {
-        this.equityAllocation = equityAllocation;
-        this.debtAllocation = debtAllocation;
-        this.goldAllocation = goldAllocation;
-    }
-
-    public Portfolio() {
+        funds = new HashMap<>();
+        funds.put(FundType.EQUITY, new Fund(equityAllocation));
+        funds.put(FundType.DEBT, new Fund(debtAllocation));
+        funds.put(FundType.GOLD, new Fund(goldAllocation));
     }
 
     @Override
@@ -35,24 +20,24 @@ public class Portfolio implements Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Portfolio portfolio = (Portfolio) o;
-        return Float.compare(portfolio.equityAllocation, equityAllocation) == 0 && Float.compare(portfolio.debtAllocation, debtAllocation) == 0 && Float.compare(portfolio.goldAllocation, goldAllocation) == 0;
+        return portfolio.getEquityFund().getCurrentAllocation() == this.getEquityFund().getCurrentAllocation() && portfolio.getDebtFund().getCurrentAllocation() == this.getDebtFund().getCurrentAllocation() && portfolio.getGoldFund().getCurrentAllocation() == this.getGoldFund().getCurrentAllocation();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(equityAllocation, debtAllocation, goldAllocation);
+        return Objects.hash(getEquityFund().getCurrentAllocation(), getDebtFund().getCurrentAllocation(), getGoldFund().getCurrentAllocation());
     }
 
     public float fetchTotal() {
-        return (this.equityAllocation + this.debtAllocation + this.goldAllocation);
+        return (getEquityFund().getCurrentAllocation() + getDebtFund().getCurrentAllocation() + getGoldFund().getCurrentAllocation());
     }
 
 
     public void applyRate(float equityAllocationChangeRate, float debtAllocationChangeRate, float goldAllocationChangeRate) {
 
-        this.equityAllocationChangeRate = equityAllocationChangeRate;
-        this.debtAllocationChangeRate = debtAllocationChangeRate;
-        this.goldAllocationChangeRate = goldAllocationChangeRate;
+        getEquityFund().setAllocationChangeRate(equityAllocationChangeRate);
+        getDebtFund().setAllocationChangeRate(debtAllocationChangeRate);
+        getGoldFund().setAllocationChangeRate(goldAllocationChangeRate);
 
         updateRates();
         if (this.isFirstMonth) this.isFirstMonth = false;
@@ -62,107 +47,61 @@ public class Portfolio implements Cloneable {
         if (!isFirstMonth) {
             incrementSip();
         }
-        this.equityAllocation = (int) (this.equityAllocation * (100 + this.equityAllocationChangeRate) / 100);
-        this.debtAllocation = (int) (this.debtAllocation * (100 + this.debtAllocationChangeRate) / 100);
-        this.goldAllocation = (int) (this.goldAllocation * (100 + this.goldAllocationChangeRate) / 100);
+        getEquityFund().setCurrentAllocation((int) (getEquityFund().getCurrentAllocation() * (100 + this.getEquityFund().getAllocationChangeRate()) / 100));
+        getDebtFund().setCurrentAllocation((int) (getDebtFund().getCurrentAllocation() * (100 + this.getDebtFund().getAllocationChangeRate()) / 100));
+        getGoldFund().setCurrentAllocation((int) (getGoldFund().getCurrentAllocation() * (100 + this.getGoldFund().getAllocationChangeRate()) / 100));
+
 
     }
 
     private void incrementSip() {
-        this.equityAllocation = (int) (this.equityAllocation + this.getSipValueForEquity());
-        this.debtAllocation = (int) (this.debtAllocation + this.getSipValueForDebt());
-        this.goldAllocation = (int) (this.goldAllocation + this.getSipValueForGold());
+        this.getEquityFund().setCurrentAllocation((int) (this.getEquityFund().getCurrentAllocation() + this.getEquityFund().getSipValue()));
+        this.getDebtFund().setCurrentAllocation((int) (this.getDebtFund().getCurrentAllocation() + this.getDebtFund().getSipValue()));
+        this.getGoldFund().setCurrentAllocation((int) (this.getGoldFund().getCurrentAllocation() + this.getGoldFund().getSipValue()));
     }
 
 
-    public float getDebtAllocation() {
-        return debtAllocation;
-    }
+    public Portfolio portfolioSnapshot() {
 
-    public void setDebtAllocation(int debtAllocation) {
-        this.debtAllocation = debtAllocation;
-    }
+        return new Portfolio(
+                this.getEquityFund().getCurrentAllocation(),
+                this.getDebtFund().getCurrentAllocation(),
+                this.getGoldFund().getCurrentAllocation());
 
-    public float getGoldAllocation() {
-        return goldAllocation;
-    }
-
-    public void setGoldAllocation(int goldAllocation) {
-        this.goldAllocation = goldAllocation;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
     }
 
     public void reBalance() {
         float subTotal = this.fetchTotal();
 
-        this.equityAllocation = (int) ((subTotal * this.equityAllocationPercent) / 100f);
-        this.debtAllocation = (int) ((subTotal * this.debtAllocationPercent) / 100f);
-        this.goldAllocation = (int) ((subTotal * this.goldAllocationPercent) / 100f);
+        this.getEquityFund().setCurrentAllocation((int) ((subTotal * this.getEquityFund().getAllocationPercent()) / 100f));
+        this.getDebtFund().setCurrentAllocation((int) ((subTotal * this.getDebtFund().getAllocationPercent()) / 100f));
+        this.getGoldFund().setCurrentAllocation((int) ((subTotal * this.getGoldFund().getAllocationPercent()) / 100f));
     }
 
     public void setInitialAllocationPercentage() {
         float subTotal = this.fetchTotal();
 
-        this.equityAllocationPercent = (this.equityAllocation / subTotal) * 100;
-        this.debtAllocationPercent = (this.debtAllocation / subTotal) * 100;
-        this.goldAllocationPercent = (this.goldAllocation / subTotal) * 100;
+        this.getEquityFund().setAllocationPercent((this.getEquityFund().getCurrentAllocation() / subTotal) * 100);
+        this.getDebtFund().setAllocationPercent((this.getDebtFund().getCurrentAllocation() / subTotal) * 100);
+        this.getGoldFund().setAllocationPercent((this.getGoldFund().getCurrentAllocation() / subTotal) * 100);
     }
 
-    public float getEquityAllocationPercent() {
-        return equityAllocationPercent;
+
+    public Fund getEquityFund() {
+        return this.funds.getOrDefault(FundType.EQUITY, new Fund());
     }
 
-    public float getDebtAllocationPercent() {
-        return debtAllocationPercent;
+    public Fund getDebtFund() {
+        return this.funds.getOrDefault(FundType.DEBT, new Fund());
     }
 
-    public float getGoldAllocationPercent() {
-        return goldAllocationPercent;
+    public Fund getGoldFund() {
+        return this.funds.getOrDefault(FundType.GOLD, new Fund());
     }
-
-    public float getEquityAllocation() {
-        return equityAllocation;
-    }
-
-    public void setEquityAllocation(int equityAllocation) {
-        this.equityAllocation = equityAllocation;
-    }
-
-    public float getSipValueForEquity() {
-        return sipValueForEquity;
-    }
-
-    public void setSipValueForEquity(float sipValueForEquity) {
-        this.sipValueForEquity = sipValueForEquity;
-    }
-
-    public float getSipValueForDebt() {
-        return sipValueForDebt;
-    }
-
-    public void setSipValueForDebt(float sipValueForDebt) {
-        this.sipValueForDebt = sipValueForDebt;
-    }
-
-    public float getSipValueForGold() {
-        return sipValueForGold;
-    }
-
-    public void setSipValueForGold(float sipValueForGold) {
-        this.sipValueForGold = sipValueForGold;
-    }
-
 
     @Override
     public String toString() {
-
-        return equityAllocation +
-                " " + debtAllocation +
-                " " + goldAllocation;
+        return getEquityFund().getCurrentAllocation() + " " + getDebtFund().getCurrentAllocation() + " " + getGoldFund().getCurrentAllocation();
     }
 }
 

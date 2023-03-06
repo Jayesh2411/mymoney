@@ -1,12 +1,9 @@
 Instructions:
 
-
 TO BUILD:
 
-
-mvn clean install -q assembly:single   ->To run with tests
-mvn clean install -DskipTests -q assembly:single  ->To run without tests
-
+mvn clean install -q assembly:single ->To run with tests
+mvn clean install -DskipTests -q assembly:single ->To run without tests
 
 TO RUN:
 

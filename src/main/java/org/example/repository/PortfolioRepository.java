@@ -15,15 +15,7 @@ public class PortfolioRepository {
     }
 
     public void setPortfolioForMonth(Month month, Portfolio portfolio) {
-        Portfolio portfolioCopy = null;
-        try {
-            portfolioCopy = (Portfolio) portfolio.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            this.portfolioMap.put(month, portfolioCopy);
-        }
-
+        this.portfolioMap.put(month, portfolio.portfolioSnapshot());
     }
 
     public Portfolio getPortfolioForMonth(Month month) {

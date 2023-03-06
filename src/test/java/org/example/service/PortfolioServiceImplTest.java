@@ -6,13 +6,14 @@ import org.example.model.Portfolio;
 import org.example.repository.PortfolioRepository;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class PortfolioServiceImplTest {
 
 
     public static final float DELTA = 0.0000001f;
-    PortfolioServiceImpl portfolioService = new PortfolioServiceImpl(new Portfolio(6000, 3000, 1000), new PortfolioRepository());
+    PortfolioServiceImpl portfolioService = new PortfolioServiceImpl(new PortfolioRepository());
 
 
     @Test
@@ -23,9 +24,9 @@ public class PortfolioServiceImplTest {
 
         assertEquals(expectedPortfolio, portfolioService.getPortfolio());
 
-        assertEquals(60, Math.round(portfolioService.getPortfolio().getEquityAllocationPercent()));
-        assertEquals(30, Math.round(portfolioService.getPortfolio().getDebtAllocationPercent()));
-        assertEquals(10, Math.round(portfolioService.getPortfolio().getGoldAllocationPercent()));
+        assertEquals(60, Math.round(portfolioService.getPortfolio().getEquityFund().getAllocationPercent()));
+        assertEquals(30, Math.round(portfolioService.getPortfolio().getDebtFund().getAllocationPercent()));
+        assertEquals(10, Math.round(portfolioService.getPortfolio().getGoldFund().getAllocationPercent()));
     }
 
     @Test
@@ -41,11 +42,12 @@ public class PortfolioServiceImplTest {
     @Test
     public void initiateSIPShouldAddSIPWithCorrectValues() {
 
+        portfolioService.allocateFunds(1000, 100, 50);
         portfolioService.initiateSIP(1000, 100, 50);
 
-        assertEquals(1000, portfolioService.getPortfolio().getSipValueForEquity(), DELTA);
-        assertEquals(100, portfolioService.getPortfolio().getSipValueForDebt(), DELTA);
-        assertEquals(50, portfolioService.getPortfolio().getSipValueForGold(), DELTA);
+        assertEquals(1000, portfolioService.getPortfolio().getEquityFund().getSipValue(), DELTA);
+        assertEquals(100, portfolioService.getPortfolio().getDebtFund().getSipValue(), DELTA);
+        assertEquals(50, portfolioService.getPortfolio().getGoldFund().getSipValue(), DELTA);
     }
 
 
@@ -100,9 +102,9 @@ public class PortfolioServiceImplTest {
 
         portfolioService.reBalancePortfolio();
 
-        assertEquals(1089, portfolioService.getPortfolio().getEquityAllocation(), DELTA);
-        assertEquals(218, portfolioService.getPortfolio().getDebtAllocation(), DELTA);
-        assertEquals(54, portfolioService.getPortfolio().getGoldAllocation(), DELTA);
+        assertEquals(1089, portfolioService.getPortfolio().getEquityFund().getCurrentAllocation(), DELTA);
+        assertEquals(218, portfolioService.getPortfolio().getDebtFund().getCurrentAllocation(), DELTA);
+        assertEquals(54, portfolioService.getPortfolio().getGoldFund().getCurrentAllocation(), DELTA);
 
     }
 
@@ -110,7 +112,7 @@ public class PortfolioServiceImplTest {
     public void rebalanceShouldAutoAllocateFundsWhenDataIsThereForSixMonths() throws Exception {
 
 
-        PortfolioServiceImpl portfolioService = new PortfolioServiceImpl(new Portfolio(6000, 3000, 1000), new PortfolioRepository());
+        PortfolioServiceImpl portfolioService = new PortfolioServiceImpl(new PortfolioRepository());
 
 
         portfolioService.allocateFunds(1000, 200, 50);
@@ -124,9 +126,9 @@ public class PortfolioServiceImplTest {
 
         portfolioService.reBalancePortfolio();
 
-        assertEquals(1674, Math.round(portfolioService.getPortfolio().getEquityAllocation()));
-        assertEquals(334, Math.round(portfolioService.getPortfolio().getDebtAllocation()));
-        assertEquals(83, Math.round(portfolioService.getPortfolio().getGoldAllocation()));
+        assertEquals(1674, Math.round(portfolioService.getPortfolio().getEquityFund().getCurrentAllocation()));
+        assertEquals(334, Math.round(portfolioService.getPortfolio().getDebtFund().getCurrentAllocation()));
+        assertEquals(83, Math.round(portfolioService.getPortfolio().getGoldFund().getCurrentAllocation()));
 
     }
 }
