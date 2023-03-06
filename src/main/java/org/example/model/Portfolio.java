@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Portfolio implements Cloneable {
+public class Portfolio {
     private boolean isFirstMonth = true;
-    private Map<FundType, Fund> funds;
+    private final Map<FundType, Fund> funds;
 
     public Portfolio(int equityAllocation, int debtAllocation, int goldAllocation) {
         funds = new HashMap<>();

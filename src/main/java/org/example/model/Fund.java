@@ -1,6 +1,6 @@
 package org.example.model;
 
-public class Fund implements Cloneable {
+public class Fund {
 
     private int currentAllocation;
     private float sipValue;
